@@ -1,0 +1,241 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+#idl-discount-options {
+	margin: 20px 0;
+	padding: 20px;
+	background: #f9f9f9;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+}
+
+.idl-quantity-discounts h4,
+.idl-bundle-discounts h4 {
+	margin-top: 0;
+	color: #333;
+	font-size: 18px;
+	border-bottom: 2px solid #0073aa;
+	padding-bottom: 10px;
+}
+
+.discount-option {
+	margin: 15px 0;
+	padding: 20px;
+	border: 2px solid #e0e0e0;
+	border-radius: 8px;
+	background: white;
+	transition: all 0.3s ease;
+	position: relative;
+}
+
+.discount-option:hover,
+.discount-option:has(input:checked) {
+	border-color: #0073aa;
+	box-shadow: 0 2px 8px rgba(0,115,170,0.1);
+}
+
+.discount-option input[type="radio"] {
+	margin-right: 15px;
+	transform: scale(1.2);
+}
+
+.discount-option label {
+	display: flex;
+	align-items: flex-start;
+	cursor: pointer;
+	margin: 0;
+}
+
+.discount-info,
+.bundle-info {
+	display: block;
+	margin-left: 25px;
+}
+
+.quantity-info {
+	font-weight: bold;
+	color: #333;
+}
+
+.price-info {
+	font-size: 18px;
+	font-weight: bold;
+	color: #0073aa;
+}
+
+.bundle-price {
+	font-size: 20px;
+	font-weight: bold;
+	color: #0073aa;
+}
+
+.discount-badge {
+	background: #ff6b6b;
+	color: white;
+	padding: 4px 8px;
+	border-radius: 15px;
+	font-size: 11px;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin: 5px 0;
+	display: inline-block;
+}
+
+.savings {
+	color: #27ae60;
+	font-weight: bold;
+	font-size: 14px;
+	display: block;
+	margin: 5px 0;
+}
+
+.discount-description {
+	margin: 10px 0 0 0;
+	color: #666;
+	font-style: italic;
+}
+
+.bundle-products {
+	flex-basis: 100%;
+	margin-top: 15px;
+	padding: 15px;
+	background: #f9f9f9;
+	border: 1px solid #e0e0e0;
+	border-radius: 5px;
+}
+
+.bundle-products strong {
+	color: #333;
+}
+
+.bundle-product-list {
+	margin: 10px 0;
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+.bundle-total {
+	margin-top: 15px;
+	padding-top: 10px;
+	border-top: 1px solid #ddd;
+}
+
+.bundle-deal-price {
+	color: #0073aa;
+	font-size: 16px;
+}
+
+.discount-item-locked {
+	color: #999;
+	font-style: italic;
+	padding: 5px 10px;
+	background: #f0f0f0;
+	border-radius: 3px;
+	font-size: 12px;
+	display: inline-block;
+}
+
+.bundle-option {
+	border: 2px solid #e0e0e0;
+	margin: 20px 0;
+}
+
+.bundle-option:hover,
+.bundle-option:has(input:checked) {
+	border-color: #0073aa;
+}
+
+.idl-add-to-cart-btn {
+	margin-top: 15px;
+	padding: 12px 24px;
+	font-size: 16px;
+	border-radius: 5px;
+	width: 100%;
+	max-width: 200px;
+	background: #0073aa;
+	color: white;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.idl-add-to-cart-btn:hover {
+	background: #005a87;
+}
+
+.idl-add-to-cart-btn.loading {
+	opacity: 0.6;
+	cursor: not-allowed;
+	background: #999;
+}
+
+.bundle-item-locked {
+	color: #999;
+	font-style: italic;
+	padding: 5px;
+}
+
+/* Cart specific styles */
+.cart .bundle-item-locked {
+	background: #f0f0f0;
+	padding: 5px 10px;
+	border-radius: 3px;
+	font-size: 12px;
+}
+
+/* Cart quantity styling */
+.cart .qty-text {
+	font-weight: bold;
+	color: #333;
+	font-size: 16px;
+}
+
+.cart .qty-note {
+	display: block;
+	color: #666;
+	font-style: italic;
+	font-size: 11px;
+	margin-top: 3px;
+}
+
+.bundle-item-locked,
+.discount-item-locked {
+	color: #999;
+	font-style: italic;
+	padding: 5px 10px;
+	background: #f0f0f0;
+	border-radius: 3px;
+	font-size: 12px;
+	display: inline-block;
+}
+
+/* Hide quantity input for discount items */
+.cart .quantity input[type="number"] {
+	display: none;
+}
+
+.cart .quantity .qty-text {
+	display: inline-block;
+	padding: 8px 12px;
+	background: #f8f8f8;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	min-width: 60px;
+	text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+	.discount-info,
+	.bundle-info {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
+	
+	.bundle-products {
+		margin-top: 15px;
+	}
+}

@@ -1,0 +1,151 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+.discount_section {
+	margin: 20px 0;
+	padding: 15px;
+	border: 1px solid #ddd;
+	background: #f9f9f9;
+}
+
+.discount_section h4 {
+	margin-top: 0;
+	color: #333;
+}
+
+.quantity_rule_row,
+.bundle_rule_row {
+	margin: 15px 0;
+	padding: 15px;
+	border: 1px solid #ccc;
+	background: #fff;
+	position: relative;
+}
+
+.quantity_rule_row .form-field,
+.bundle_rule_row .form-field {
+	display: inline-block;
+	width: 18%;
+	margin-right: 2%;
+	vertical-align: top;
+}
+
+.quantity_rule_row .form-field:last-of-type,
+.bundle_rule_row .form-field:last-of-type {
+	margin-right: 0;
+}
+
+.remove_rule {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background: #dc3232 !important;
+	color: white !important;
+}
+
+.product-suggestions {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	background: white;
+	border: 1px solid #ddd;
+	max-height: 200px;
+	overflow-y: auto;
+	z-index: 1000;
+}
+
+.suggestion {
+	padding: 8px 12px;
+	cursor: pointer;
+	border-bottom: 1px solid #eee;
+}
+
+.suggestion:hover {
+	background: #f0f0f0;
+}
+
+.form-field {
+	position: relative;
+}
+
+#quantity_discount_section,
+#bundle_discount_section {
+	display: none;
+}
+
+/* Ensure hidden sections don't interfere with form validation */
+#quantity_discount_section:not([style*="display: block"]) input,
+#quantity_discount_section:not([style*="display: block"]) textarea,
+#bundle_discount_section:not([style*="display: block"]) input,
+#bundle_discount_section:not([style*="display: block"]) textarea {
+	pointer-events: none;
+	visibility: hidden;
+	position: absolute;
+	left: -9999px;
+}
+
+/* Show sections when they have display: block */
+#quantity_discount_section[style*="display: block"],
+#bundle_discount_section[style*="display: block"] {
+	display: block !important;
+}
+
+#quantity_discount_section[style*="display: block"] input,
+#quantity_discount_section[style*="display: block"] textarea,
+#bundle_discount_section[style*="display: block"] input,
+#bundle_discount_section[style*="display: block"] textarea {
+	pointer-events: auto;
+	visibility: visible;
+	position: static;
+	left: auto;
+}
+
+.selected-products-display {
+	margin-top: 10px;
+	min-height: 20px;
+}
+
+.selected-product-item {
+	display: inline-block;
+	margin: 5px 5px 5px 0;
+	padding: 5px 10px;
+	background: #f0f0f0;
+	border: 1px solid #ddd;
+	border-radius: 15px;
+	font-size: 12px;
+	position: relative;
+	padding-right: 25px;
+}
+
+.selected-product-item .product-name {
+	font-weight: bold;
+	color: #333;
+}
+
+.selected-product-item .product-price {
+	color: #666;
+	margin-left: 5px;
+}
+
+.remove-product {
+	position: absolute;
+	top: 2px;
+	right: 5px;
+	background: #dc3232;
+	color: white;
+	border: none;
+	border-radius: 50%;
+	width: 16px;
+	height: 16px;
+	font-size: 10px;
+	line-height: 1;
+	cursor: pointer;
+	padding: 0;
+}
+
+.remove-product:hover {
+	background: #a00;
+}
