@@ -188,7 +188,7 @@ class Idl_Pricediscount_Admin {
 				<label><?php _e( 'Description', 'idl-pricediscount' ); ?></label>
 				<textarea name="quantity_rules[<?php echo $index; ?>][description]"><?php echo isset( $rule['description'] ) ? esc_textarea( $rule['description'] ) : ''; ?></textarea>
 			</p>
-			<button type="button" class="button remove_rule"><?php _e( 'Remove', 'idl-pricediscount' ); ?></button>
+			<button type="button" class="button remove_rule"><?php _e( 'X', 'idl-pricediscount' ); ?></button>
 		</div>
 		<?php
 	}
@@ -217,10 +217,10 @@ class Idl_Pricediscount_Admin {
 				<input type="text" name="bundle_rules[<?php echo $index; ?>][badge]" value="<?php echo isset( $rule['badge'] ) ? esc_attr( $rule['badge'] ) : ''; ?>" />
 			</p>
 			<p class="form-field">
-				<label><?php _e( 'Description', 'idl-pricediscount' ); ?></label>
+				<label><?php _e( 'Title', 'idl-pricediscount' ); ?></label>
 				<textarea name="bundle_rules[<?php echo $index; ?>][description]"><?php echo isset( $rule['description'] ) ? esc_textarea( $rule['description'] ) : ''; ?></textarea>
 			</p>
-			<button type="button" class="button remove_rule"><?php _e( 'Remove', 'idl-pricediscount' ); ?></button>
+			<button type="button" class="button remove_rule"><?php _e( 'X', 'idl-pricediscount' ); ?></button>
 		</div>
 		<?php
 	}

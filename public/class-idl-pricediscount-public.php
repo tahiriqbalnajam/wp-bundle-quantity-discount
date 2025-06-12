@@ -188,7 +188,7 @@ class Idl_Pricediscount_Public {
 		}
 
 		echo '<div class="idl-bundle-discounts">';
-		echo '<h4>' . __( 'Bundle Deals Available', 'idl-pricediscount' ) . '</h4>';
+		//echo '<h4>' . __( 'Bundle Deals Available', 'idl-pricediscount' ) . '</h4>';
 		
 		foreach ( $bundle_rules as $index => $rule ) {
 			if ( empty( $rule['products'] ) || empty( $rule['price'] ) ) {
@@ -210,37 +210,55 @@ class Idl_Pricediscount_Public {
 			echo '<div class="discount-option bundle-option" data-type="bundle" data-index="' . $index . '" data-product-id="' . $product->get_id() . '">';
 			echo '<label>';
 			echo '<input type="radio" name="idl_discount_option" value="bundle_' . $index . '" data-price="' . $rule['price'] . '" data-products="' . esc_attr( $rule['products'] ) . '">';
-			echo '<div class="bundle-info">';
-			echo '<span class="bundle-price">' . wc_price( $rule['price'] ) . '</span>';
+			echo '<div class="bundle-info-main">';
+				echo '<div class="bundle-info">';
+				echo '<div class="bundle-left-content">';
+				if ( ! empty( $rule['description'] ) ) {
+					echo '<div class="discount-description">' . esc_html( $rule['description'] ) . '</div>';
+				}
+				if ( ! empty( $rule['badge'] ) ) {
+					echo '<div class="discount-badge">' . esc_html( $rule['badge'] ) . '</div>';
+				}
+				echo '</div>';
+				echo '<div class="bundle-price">
+						<div class="discountprice">' . wc_price( $rule['price'] ) . '</div>
+						<div class="regularprice">' . wc_price( $total_regular_price ) . '</div>
+						</div>';
+				echo '</div>';
 			
-			if ( ! empty( $rule['badge'] ) ) {
-				echo '<span class="discount-badge">' . esc_html( $rule['badge'] ) . '</span>';
-			}
+			
 			
 			echo '<div class="bundle-products">';
-			echo '<strong>' . __( 'This bundle includes:', 'idl-pricediscount' ) . '</strong><br>';
-			echo '<div class="bundle-product-list">';
-			echo '• ' . $product->get_name() . ' - ' . wc_price( $product->get_price() ) . '<br>';
+			echo '<div class="bundle-product-list"><ul>';
+			echo '<li>';
+			$main_image_id = $product->get_image_id();
+			if ( $main_image_id ) {
+				$main_image_url = wp_get_attachment_image_src( $main_image_id, 'thumbnail' );
+				if ( $main_image_url ) {
+					echo '<img src="' . esc_url( $main_image_url[0] ) . '" alt="' . esc_attr( $product->get_name() ) . '" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; vertical-align: middle;">';
+				}
+			}
+			echo '+ FREE &nbsp;'.$product->get_name() . ' worth ' . wc_price( $product->get_price() ) . '</li>';
 			
 			foreach ( $bundle_products as $bundle_product_id ) {
 				$bundle_product = wc_get_product( $bundle_product_id );
 				if ( $bundle_product ) {
-					echo '• ' . $bundle_product->get_name() . ' - ' . wc_price( $bundle_product->get_price() ) . '<br>';
+					echo '<li>';
+					$bundle_image_id = $bundle_product->get_image_id();
+					if ( $bundle_image_id ) {
+						$bundle_image_url = wp_get_attachment_image_src( $bundle_image_id, 'thumbnail' );
+						if ( $bundle_image_url ) {
+							echo '<img src="' . esc_url( $bundle_image_url[0] ) . '" alt="' . esc_attr( $bundle_product->get_name() ) . '" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; vertical-align: middle;">';
+						}
+					}
+					echo '+ FREE &nbsp;'.$bundle_product->get_name() . ' worth ' . wc_price( $bundle_product->get_price() ) . '</li>';
 				}
 			}
-			echo '</div>';
-			echo '<div class="bundle-total">';
-			echo '<strong>' . __( 'Regular Total: ', 'idl-pricediscount' ) . wc_price( $total_regular_price ) . '</strong><br>';
-			echo '<strong class="bundle-deal-price">' . __( 'Bundle Price: ', 'idl-pricediscount' ) . wc_price( $rule['price'] ) . '</strong>';
-			echo '</div>';
+			echo '</ul></div>';
 			echo '</div>';
 			
 			if ( $savings > 0 ) {
 				echo '<span class="savings">' . sprintf( __( 'You Save %s!', 'idl-pricediscount' ), wc_price( $savings ) ) . '</span>';
-			}
-			
-			if ( ! empty( $rule['description'] ) ) {
-				echo '<p class="discount-description">' . esc_html( $rule['description'] ) . '</p>';
 			}
 			
 			echo '</div>';

@@ -24,6 +24,17 @@
 	position: relative;
 }
 
+.quantity_rule_row {
+	display: flex;
+	gap: 2%;
+	flex-wrap:wrap;
+}
+
+.quantity_rule_row .form-field {
+	flex: 1;
+	margin-right: 0;
+}
+
 .quantity_rule_row .form-field,
 .bundle_rule_row .form-field {
 	display: inline-block;

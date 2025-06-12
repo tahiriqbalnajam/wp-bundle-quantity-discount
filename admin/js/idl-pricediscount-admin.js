@@ -259,7 +259,7 @@
 						<label>Description</label>
 						<textarea name="quantity_rules[${index}][description]"></textarea>
 					</p>
-					<button type="button" class="button remove_rule">Remove</button>
+					<button type="button" class="button remove_rule">X</button>
 				</div>
 			`;
 		}
@@ -285,7 +285,7 @@
 						<label>Description</label>
 						<textarea name="bundle_rules[${index}][description]"></textarea>
 					</p>
-					<button type="button" class="button remove_rule">Remove</button>
+					<button type="button" class="button remove_rule">X</button>
 				</div>
 			`;
 		}
