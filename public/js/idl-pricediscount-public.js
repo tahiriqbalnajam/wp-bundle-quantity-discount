@@ -30,6 +30,18 @@
 	 */
 
 	$(document).ready(function() {
+		// Show add to cart button for default selected option on page load
+		function showDefaultAddToCartButton() {
+			var $defaultChecked = $('input[name="idl_discount_option"]:checked');
+			if ($defaultChecked.length > 0) {
+				$('.idl-add-to-cart-btn').hide();
+				$defaultChecked.closest('.discount-option').find('.idl-add-to-cart-btn').show();
+			}
+		}
+		
+		// Initialize on page load
+		showDefaultAddToCartButton();
+		
 		// Handle discount option selection
 		$(document).on('change', 'input[name="idl_discount_option"]', function() {
 			var $selectedOption = $(this);
@@ -42,6 +54,13 @@
 			
 			// Show the add to cart button for the selected option
 			$parentOption.find('.idl-add-to-cart-btn').show();
+			
+			// Scroll to the add to cart button
+			setTimeout(function() {
+				$('html, body').animate({
+					scrollTop: $parentOption.find('.idl-add-to-cart-btn').offset().top - 100
+				}, 500);
+			}, 100);
 			
 			// For quantity discounts, we don't need to update anything else
 			// as the quantity is fixed per option

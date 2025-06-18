@@ -220,6 +220,12 @@ class Idl_Pricediscount_Admin {
 				<label><?php _e( 'Title', 'idl-pricediscount' ); ?></label>
 				<textarea name="bundle_rules[<?php echo $index; ?>][description]"><?php echo isset( $rule['description'] ) ? esc_textarea( $rule['description'] ) : ''; ?></textarea>
 			</p>
+			<p class="form-field">
+				<label>
+					<input type="checkbox" name="bundle_rules[<?php echo $index; ?>][is_default]" value="1" <?php checked( isset( $rule['is_default'] ) ? $rule['is_default'] : 0, 1 ); ?> class="bundle_default_checkbox" />
+					<?php _e( 'Make Default', 'idl-pricediscount' ); ?>
+				</label>
+			</p>
 			<button type="button" class="button remove_rule"><?php _e( 'X', 'idl-pricediscount' ); ?></button>
 		</div>
 		<?php
@@ -291,12 +297,24 @@ class Idl_Pricediscount_Admin {
 
 		if ( isset( $_POST['bundle_rules'] ) ) {
 			$bundle_rules = array();
-			foreach ( $_POST['bundle_rules'] as $rule ) {
+			$has_default = false;
+			
+			foreach ( $_POST['bundle_rules'] as $index => $rule ) {
+				$is_default = isset( $rule['is_default'] ) ? 1 : 0;
+				
+				// Ensure only one default is set
+				if ( $is_default && $has_default ) {
+					$is_default = 0;
+				} elseif ( $is_default ) {
+					$has_default = true;
+				}
+				
 				$bundle_rules[] = array(
 					'products' => sanitize_text_field( $rule['products'] ),
 					'price' => floatval( $rule['price'] ),
 					'badge' => sanitize_text_field( $rule['badge'] ),
-					'description' => sanitize_textarea_field( $rule['description'] )
+					'description' => sanitize_textarea_field( $rule['description'] ),
+					'is_default' => $is_default
 				);
 			}
 			update_post_meta( $post_id, '_idl_bundle_rules', $bundle_rules );
