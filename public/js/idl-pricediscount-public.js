@@ -30,8 +30,29 @@
 	 */
 
 	$(document).ready(function() {
+		// Show add to cart button for default selected option on page load
+		function showDefaultAddToCartButton() {
+			var $defaultChecked = $('input[name="idl_discount_option"]:checked');
+			if ($defaultChecked.length > 0) {
+				$('.idl-add-to-cart-btn').hide();
+				$defaultChecked.closest('.discount-option').find('.idl-add-to-cart-btn').hide();
+				
+				
+				
+				var $selectedButton1 = $defaultChecked.closest('.discount-option').find('.idl-add-to-cart-btn');
+        	    // Clone it and insert into the display div
+        	    $('.dislay-addtocart-buttun').html($selectedButton1.clone(true, true).show());
+        	
+        	
+			}
+		}
+		
+		// Initialize on page load
+		showDefaultAddToCartButton();
+		
 		// Handle discount option selection
 		$(document).on('change', 'input[name="idl_discount_option"]', function() {
+		    
 			var $selectedOption = $(this);
 			var $parentOption = $selectedOption.closest('.discount-option');
 			var discountType = $parentOption.data('type');
@@ -41,7 +62,24 @@
 			$('.idl-add-to-cart-btn').hide();
 			
 			// Show the add to cart button for the selected option
-			$parentOption.find('.idl-add-to-cart-btn').show();
+			//$parentOption.find('.idl-add-to-cart-btn').show();
+			
+			
+			
+			var $selectedButton = $parentOption.find('.idl-add-to-cart-btn');
+        	// Clone it and insert into the display div
+        	$('.dislay-addtocart-buttun').html($selectedButton.clone(true, true).show());
+	
+	
+	
+	
+			
+			// Scroll to the add to cart button
+			setTimeout(function() {
+				$('html, body').animate({
+					scrollTop: $parentOption.find('.idl-add-to-cart-btn').offset().top - 100
+				}, 500);
+			}, 100);
 			
 			// For quantity discounts, we don't need to update anything else
 			// as the quantity is fixed per option

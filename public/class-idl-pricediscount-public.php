@@ -187,89 +187,11 @@ class Idl_Pricediscount_Public {
 			return;
 		}
 
-		echo '<div class="idl-bundle-discounts">';
-		//echo '<h4>' . __( 'Bundle Deals Available', 'idl-pricediscount' ) . '</h4>';
-		
-		foreach ( $bundle_rules as $index => $rule ) {
-			if ( empty( $rule['products'] ) || empty( $rule['price'] ) ) {
-				continue;
-			}
-			
-			$bundle_products = $this->parse_bundle_products( $rule['products'] );
-			$total_regular_price = $product->get_price();
-			
-			foreach ( $bundle_products as $bundle_product_id ) {
-				$bundle_product = wc_get_product( $bundle_product_id );
-				if ( $bundle_product ) {
-					$total_regular_price += $bundle_product->get_price();
-				}
-			}
-			
-			$savings = $total_regular_price - $rule['price'];
-			
-			echo '<div class="discount-option bundle-option" data-type="bundle" data-index="' . $index . '" data-product-id="' . $product->get_id() . '">';
-			echo '<label>';
-			echo '<input type="radio" name="idl_discount_option" value="bundle_' . $index . '" data-price="' . $rule['price'] . '" data-products="' . esc_attr( $rule['products'] ) . '">';
-			echo '<div class="bundle-info-main">';
-				echo '<div class="bundle-info">';
-				echo '<div class="bundle-left-content">';
-				if ( ! empty( $rule['description'] ) ) {
-					echo '<div class="discount-description">' . esc_html( $rule['description'] ) . '</div>';
-				}
-				if ( ! empty( $rule['badge'] ) ) {
-					echo '<div class="discount-badge">' . esc_html( $rule['badge'] ) . '</div>';
-				}
-				echo '</div>';
-				echo '<div class="bundle-price">
-						<div class="discountprice">' . wc_price( $rule['price'] ) . '</div>
-						<div class="regularprice">' . wc_price( $total_regular_price ) . '</div>
-						</div>';
-				echo '</div>';
-			
-			
-			
-			echo '<div class="bundle-products">';
-			echo '<div class="bundle-product-list"><ul>';
-			echo '<li>';
-			$main_image_id = $product->get_image_id();
-			if ( $main_image_id ) {
-				$main_image_url = wp_get_attachment_image_src( $main_image_id, 'thumbnail' );
-				if ( $main_image_url ) {
-					echo '<img src="' . esc_url( $main_image_url[0] ) . '" alt="' . esc_attr( $product->get_name() ) . '" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; vertical-align: middle;">';
-				}
-			}
-			echo '+ FREE &nbsp;'.$product->get_name() . ' worth ' . wc_price( $product->get_price() ) . '</li>';
-			
-			foreach ( $bundle_products as $bundle_product_id ) {
-				$bundle_product = wc_get_product( $bundle_product_id );
-				if ( $bundle_product ) {
-					echo '<li>';
-					$bundle_image_id = $bundle_product->get_image_id();
-					if ( $bundle_image_id ) {
-						$bundle_image_url = wp_get_attachment_image_src( $bundle_image_id, 'thumbnail' );
-						if ( $bundle_image_url ) {
-							echo '<img src="' . esc_url( $bundle_image_url[0] ) . '" alt="' . esc_attr( $bundle_product->get_name() ) . '" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; vertical-align: middle;">';
-						}
-					}
-					echo '+ FREE &nbsp;'.$bundle_product->get_name() . ' worth ' . wc_price( $bundle_product->get_price() ) . '</li>';
-				}
-			}
-			echo '</ul></div>';
-			echo '</div>';
-			
-			if ( $savings > 0 ) {
-				echo '<span class="savings">' . sprintf( __( 'You Save %s!', 'idl-pricediscount' ), wc_price( $savings ) ) . '</span>';
-			}
-			
-			echo '</div>';
-			echo '</label>';
-			echo '<button type="button" class="button alt idl-add-to-cart-btn" data-type="bundle" data-index="' . $index . '" data-product-id="' . $product->get_id() . '" style="display:none;">';
-			echo __( 'Add Bundle to Cart', 'idl-pricediscount' );
-			echo '</button>';
-			echo '</div>';
-		}
-		
-		echo '</div>';
+		ob_start();
+		include 'partials/display_bundle_discount_options.php';
+		$content = ob_get_contents();
+		ob_get_clean();
+		echo $content;
 	}
 
 	private function parse_bundle_products( $products_string ) {

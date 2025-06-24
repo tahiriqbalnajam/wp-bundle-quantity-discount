@@ -4,7 +4,12 @@
  */
 
 #idl-discount-options {
+	/* Hide main WooCommerce add to cart button when discount options are present */
+}
 
+/* Hide main add to cart button when discount options are available */
+.single-product:has(#idl-discount-options) .cart .single_add_to_cart_button {
+	display: none !important;
 }
 
 .idl-quantity-discounts h4,
@@ -18,7 +23,6 @@
 
 .discount-option {
 	margin: 15px 0;
-	padding: 20px;
 	border: 2px solid #e0e0e0;
 	border-radius: 8px;
 	background: white;
@@ -58,7 +62,6 @@
 .discount-info,
 .bundle-info {
 	display: block;
-	margin-left: 25px;
 }
 
 .quantity-info {
@@ -79,7 +82,7 @@
 }
 
 .discount-badge {
-	background: #ff6b6b;
+	    background: black;
 	color: white;
 	padding: 4px 8px;
 	border-radius: 15px;
@@ -107,6 +110,7 @@
 
 .bundle-products {
 	flex-basis: 100%;
+	padding:0 10px;
 
 }
 
@@ -142,8 +146,7 @@
 }
 
 .bundle-option {
-	border: 2px solid #e0e0e0;
-	margin: 20px 0;
+	border: 2px solid #e2d2d2;
 }
 
 .bundle-option:hover,
@@ -152,7 +155,7 @@
 }
 
 .idl-add-to-cart-btn {
-	margin-top: 15px;
+	margin: 15px;
 	padding: 12px 24px;
 	font-size: 16px;
 	border-radius: 5px;
@@ -229,30 +232,18 @@
 	min-width: 60px;
 	text-align: center;
 }
-
-/* Responsive design */
-@media (max-width: 768px) {
-	.discount-info,
-	.bundle-info {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 10px;
-	}
-	
-	.bundle-products {
-		margin-top: 15px;
-	}
-}
 .bundle-info {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
 	gap: 20px;
+	padding: 10px;
+	border-radius: 10px 10px 0 0;
 }
 .bundle-left-content {
 	display: flex;
-	gap: 20px;
+	gap: 10px;
 }
 
 .regularprice {
@@ -269,8 +260,113 @@
 }
 .bundle-product-list ul {
     list-style: none;
+	padding: 0;
+	margin: 0;
 }
 .bundle-product-list ul li {
     padding-bottom: 20px;
     font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+.bundle-product-list ul li img {
+    width: 40px !important;
+    height: 40px !important;
+    object-fit: cover !important;
+    margin-right: 10px !important;
+    vertical-align: middle !important;
+    flex-shrink: 0;
+}
+
+.bundle-info:has(input:checked) {
+	background: rgba(202, 231, 255, 1);
+;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+	.discount-info,
+	.bundle-info {
+		flex-direction: row;
+		align-items: flex-start;
+		gap: 10px;
+	}
+	
+	.bundle-products {
+		margin-top: 15px;
+	}
+	.bundle-left-content {
+		gap: 10px;
+	}
+	.discount-option input[type="radio"] {
+		margin-right: 6px;
+	}
+}
+
+@media (max-width: 360px) {
+	.bundle-info {
+		flex-direction: row;
+		align-items: stretch;
+	}
+	
+	.bundle-left-content {
+		flex-direction: row;
+		gap: 5px;
+	}
+	
+	.discount-badge {
+		align-self: flex-start;
+		margin: 0;
+		flex-shrink: 0;
+	}
+	
+	.bundle-product-list ul li {
+		font-size: 16px;
+		padding-bottom: 15px;
+	}
+	
+	.bundle-price {
+		font-size: 20px;
+	}
+	
+	.discount-description {
+		font-size: 18px;
+	}
+	
+	.discount-option input[type="radio"] {
+		transform: scale(1.2);
+		margin-top: 8px;
+	}
+}
+
+
+.bundle-product-list li {
+    padding-left: 15px;
+}
+.bundle-left-content {
+    padding-left: 15px;
+}
+.bundle-price {
+    padding-right: 10px;
+}
+
+span.inner-free-text {
+    padding-left: 20px;
+}
+
+.dislay-addtocart-buttun .idl-add-to-cart-btn {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 12px;
+    background: green !important;
+    border: green !important;
+    font-weight: 600;
+    /* padding: 0; */
+    margin: 0 0 85px 0;
+}
+
+
+.product-gallery-summary .entry-summary .price {
+    display: none;
 }
