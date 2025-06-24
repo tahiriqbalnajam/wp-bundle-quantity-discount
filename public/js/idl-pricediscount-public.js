@@ -81,6 +81,13 @@
 				}, 500);
 			}, 100);
 			
+			// Scroll to the add to cart button
+			setTimeout(function() {
+				$('html, body').animate({
+					scrollTop: $parentOption.find('.idl-add-to-cart-btn').offset().top - 100
+				}, 500);
+			}, 100);
+			
 			// For quantity discounts, we don't need to update anything else
 			// as the quantity is fixed per option
 		});
