@@ -8,22 +8,18 @@
 			
 			if (selectedType === 'quantity') {
 				$('#quantity_discount_section').show().css('display', 'block');
+				$('#quantity_discount_section input, #quantity_discount_section textarea, #quantity_discount_section select').prop('disabled', false);
 				$('#bundle_discount_section').hide().css('display', 'none');
-				// Disable validation for hidden bundle fields
-				$('#bundle_discount_section input, #bundle_discount_section textarea').prop('disabled', true);
-				// Enable validation for visible quantity fields
-				$('#quantity_discount_section input, #quantity_discount_section textarea').prop('disabled', false);
+				$('#bundle_discount_section input, #bundle_discount_section textarea, #bundle_discount_section select').prop('disabled', true);
 			} else if (selectedType === 'bundle') {
 				$('#quantity_discount_section').hide().css('display', 'none');
+				$('#quantity_discount_section input, #quantity_discount_section textarea, #quantity_discount_section select').prop('disabled', true);
 				$('#bundle_discount_section').show().css('display', 'block');
-				// Disable validation for hidden quantity fields
-				$('#quantity_discount_section input, #quantity_discount_section textarea').prop('disabled', true);
-				// Enable validation for visible bundle fields
-				$('#bundle_discount_section input, #bundle_discount_section textarea').prop('disabled', false);
+				$('#bundle_discount_section input, #bundle_discount_section textarea, #bundle_discount_section select').prop('disabled', false);
 			} else {
 				$('#quantity_discount_section, #bundle_discount_section').hide().css('display', 'none');
-				// Disable validation for all hidden fields
-				$('#quantity_discount_section input, #quantity_discount_section textarea, #bundle_discount_section input, #bundle_discount_section textarea').prop('disabled', true);
+				$('#quantity_discount_section input, #quantity_discount_section textarea, #quantity_discount_section select').prop('disabled', true);
+				$('#bundle_discount_section input, #bundle_discount_section textarea, #bundle_discount_section select').prop('disabled', true);
 			}
 		}
 
@@ -120,12 +116,6 @@
 			var productId = $suggestion.data('id');
 			var productName = $suggestion.data('name');
 			
-			console.log('Suggestion clicked:', {
-				id: productId,
-				name: productName,
-				element: $suggestion
-			});
-			
 			// Find the bundle rule row that contains this suggestion
 			var $bundleRow = $suggestion.closest('.bundle_rule_row');
 			if ($bundleRow.length === 0) {
@@ -138,10 +128,7 @@
 				}
 			}
 			
-			console.log('Bundle row found:', $bundleRow.length > 0);
-			
 			if ($bundleRow.length === 0) {
-				console.error('Could not find bundle rule row');
 				return;
 			}
 			
@@ -149,16 +136,7 @@
 			var $hiddenInput = $bundleRow.find('input[name*="[products]"]');
 			var $display = $bundleRow.find('.selected-products-display');
 			
-			console.log('Elements found:', {
-				hiddenInput: $hiddenInput.length,
-				hiddenInputName: $hiddenInput.attr('name'),
-				display: $display.length,
-				bundleRowIndex: $bundleRow.data('index')
-			});
-			
 			if ($hiddenInput.length === 0 || $display.length === 0) {
-				console.error('Could not find required elements within bundle row');
-				console.log('Bundle row HTML:', $bundleRow.html());
 				return;
 			}
 			
@@ -175,8 +153,6 @@
 				}
 			}
 			
-			console.log('Current selected IDs:', selectedIds);
-			
 			// Check if product is already selected
 			if (selectedIds.indexOf(parseInt(productId)) === -1) {
 				// Clean product name (remove price info if present)
@@ -187,15 +163,12 @@
 				var updatedProducts = currentProducts ? currentProducts + ', ' + newProductString : newProductString;
 				$hiddenInput.val(updatedProducts);
 				
-				console.log('Updated products string:', updatedProducts);
-				
 				// Add to display
 				var productHtml = '<div class="selected-product-item" data-product-id="' + productId + '">';
 				productHtml += '<span class="product-name">' + cleanProductName + '</span>';
 				productHtml += '<button type="button" class="remove-product" data-product-id="' + productId + '">×</button>';
 				productHtml += '</div>';
 				
-				console.log('Adding product HTML:', productHtml);
 				$display.append(productHtml);
 				
 				// Verify it was added
@@ -211,29 +184,58 @@
 		});
 
 		// Remove selected product
-		$(document).on('click', '.remove-product', function() {
+		$(document).on('click', '.remove-product', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			
 			var $button = $(this);
 			var productId = $button.data('product-id');
-			var $formField = $button.closest('.form-field');
-			var $hiddenInput = $formField.find('.selected_products');
+			
+			console.log('Removing product with ID:', productId);
+			
+			// Find the closest bundle rule row
+			var $bundleRow = $button.closest('.bundle_rule_row');
+			var $hiddenInput = $bundleRow.find('input[name*="[products]"]');
+			
+			console.log('Bundle row found:', $bundleRow.length > 0);
+			console.log('Hidden input found:', $hiddenInput.length > 0);
+			console.log('Current products value:', $hiddenInput.val());
 			
 			// Get current products value safely
 			var currentProducts = $hiddenInput.val() || '';
 			
 			if (currentProducts) {
-				// Remove from hidden input
-				var regex = new RegExp('[^,]*\\(ID: ' + productId + '\\)[,\\s]*', 'g');
-				var updatedProducts = currentProducts.replace(regex, '');
+				// Create a more precise regex to remove the specific product
+				var regex = new RegExp('(^|,\\s*)[^,]*\\(ID:\\s*' + productId + '\\)(\\s*,|$)', 'g');
+				var updatedProducts = currentProducts.replace(regex, function(match, before, after) {
+					// If there's a comma before and after, keep one comma
+					if (before.includes(',') && after.includes(',')) {
+						return ', ';
+					}
+					// If there's only a comma before or after, remove the comma
+					if (before.includes(',') || after.includes(',')) {
+						return '';
+					}
+					// If no commas, this is the only/last item
+					return '';
+				});
 				
-				// Clean up extra commas and spaces
+				// Clean up any remaining issues with commas and spaces
 				updatedProducts = updatedProducts.replace(/^[,\s]+|[,\s]+$/g, ''); // Remove leading/trailing commas and spaces
-				updatedProducts = updatedProducts.replace(/[,\s]*,[,\s]*/g, ', '); // Clean up multiple commas
+				updatedProducts = updatedProducts.replace(/\s*,\s*,\s*/g, ', '); // Clean up double commas
+				
+				console.log('Updated products value:', updatedProducts);
 				
 				$hiddenInput.val(updatedProducts);
+				
+				// Trigger change event to notify any listeners
+				$hiddenInput.trigger('change');
 			}
 			
 			// Remove from display
 			$button.closest('.selected-product-item').remove();
+			
+			console.log('Product removed from display');
 		});
 
 		function createQuantityRuleRow(index) {
@@ -290,28 +292,26 @@
 			`;
 		}
 
-		// Prevent form submission if there are validation errors in hidden sections
+		// Handle form submission to ensure all data is sent
 		$(document).on('submit', '#post', function(e) {
 			var selectedType = $('input[name="idl_discount_type"]:checked').val();
 			
-			// Before submission, temporarily enable all fields to ensure data is saved
-			$('#quantity_discount_section input, #quantity_discount_section textarea, #bundle_discount_section input, #bundle_discount_section textarea').prop('disabled', false);
+			console.log('Form submission - selected type:', selectedType);
 			
-			// But clear validation state for fields that shouldn't be validated
-			if (selectedType !== 'quantity') {
-				$('#quantity_discount_section input, #quantity_discount_section textarea').each(function() {
-					if (this.setCustomValidity) {
-						this.setCustomValidity('');
-					}
+			// Log bundle data before submission
+			if (selectedType === 'bundle') {
+				$('#bundle_rules input[name*="[products]"]').each(function(index) {
+					console.log('Bundle rule', index, 'products:', $(this).val());
 				});
 			}
 			
-			if (selectedType !== 'bundle') {
-				$('#bundle_discount_section input, #bundle_discount_section textarea').each(function() {
-					if (this.setCustomValidity) {
-						this.setCustomValidity('');
-					}
-				});
+			// Only enable fields for the selected discount type before submission
+			if (selectedType === 'quantity') {
+				$('#quantity_discount_section input, #quantity_discount_section textarea, #quantity_discount_section select').prop('disabled', false);
+				$('#bundle_discount_section input, #bundle_discount_section textarea, #bundle_discount_section select').prop('disabled', true);
+			} else if (selectedType === 'bundle') {
+				$('#bundle_discount_section input, #bundle_discount_section textarea, #bundle_discount_section select').prop('disabled', false);
+				$('#quantity_discount_section input, #quantity_discount_section textarea, #quantity_discount_section select').prop('disabled', true);
 			}
 		});
 	});

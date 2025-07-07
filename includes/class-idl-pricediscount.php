@@ -182,6 +182,7 @@ class Idl_Pricediscount {
 		// Product page hooks
 		$this->loader->add_action( 'woocommerce_single_product_summary', $plugin_public, 'display_discount_options', 25 );
 		
+		$this->loader->add_action('woocommerce_single_product_summary', $plugin_public, 'custom_show_reviews_after_title', 6);
 		// Cart hooks
 		$this->loader->add_filter( 'woocommerce_add_cart_item_data', $plugin_public, 'add_discount_data_to_cart', 10, 3 );
 		$this->loader->add_filter( 'woocommerce_get_cart_item_from_session', $plugin_public, 'get_cart_item_discount_data_from_session', 10, 2 );

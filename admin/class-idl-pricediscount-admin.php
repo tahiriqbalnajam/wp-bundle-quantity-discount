@@ -220,6 +220,12 @@ class Idl_Pricediscount_Admin {
 				<label><?php _e( 'Title', 'idl-pricediscount' ); ?></label>
 				<textarea name="bundle_rules[<?php echo $index; ?>][description]"><?php echo isset( $rule['description'] ) ? esc_textarea( $rule['description'] ) : ''; ?></textarea>
 			</p>
+			<p class="form-field">
+				<label>
+					<input type="checkbox" name="bundle_rules[<?php echo $index; ?>][is_default]" value="1" <?php checked( isset( $rule['is_default'] ) ? $rule['is_default'] : 0, 1 ); ?> class="bundle_default_checkbox" />
+					<?php _e( 'Make Default', 'idl-pricediscount' ); ?>
+				</label>
+			</p>
 			<button type="button" class="button remove_rule"><?php _e( 'X', 'idl-pricediscount' ); ?></button>
 		</div>
 		<?php
@@ -234,7 +240,13 @@ class Idl_Pricediscount_Admin {
 		
 		if ( empty( $product_ids ) ) {
 			// Handle old format where product names were stored
-			echo '<div class="selected-product-item">' . esc_html( $products_string ) . '</div>';
+			$product_names = explode( ',', $products_string );
+			foreach ( $product_names as $product_name ) {
+				$product_name = trim( $product_name );
+				if ( ! empty( $product_name ) ) {
+					echo '<div class="selected-product-item">' . esc_html( $product_name ) . '</div>';
+				}
+			}
 			return;
 		}
 
@@ -246,18 +258,32 @@ class Idl_Pricediscount_Admin {
 				echo '<span class="product-price">(' . wc_price( $product->get_price() ) . ')</span>';
 				echo '<button type="button" class="remove-product" data-product-id="' . $product_id . '">×</button>';
 				echo '</div>';
+			} else {
+				// Product no longer exists, but we still show it with a note
+				echo '<div class="selected-product-item" data-product-id="' . $product_id . '">';
+				echo '<span class="product-name">Product ID: ' . $product_id . ' (Not Found)</span>';
+				echo '<span class="product-price">(Product not found)</span>';
+				echo '<button type="button" class="remove-product" data-product-id="' . $product_id . '">×</button>';
+				echo '</div>';
 			}
 		}
 	}
 
 	private function parse_bundle_products( $products_string ) {
-		// Try to extract product IDs from the string
-		preg_match_all('/\(ID: (\d+)\)/', $products_string, $matches);
+		if ( empty( $products_string ) ) {
+			return array();
+		}
+		
+		// Clean up the string first
+		$products_string = trim( $products_string );
+		
+		// Try to extract product IDs from the string using the format: Product Name (ID: 123)
+		preg_match_all('/\(ID:\s*(\d+)\)/', $products_string, $matches);
 		if ( ! empty( $matches[1] ) ) {
 			return array_map( 'intval', $matches[1] );
 		}
 
-		// If no IDs found, try comma-separated product IDs
+		// If no IDs found, try comma-separated product IDs (fallback for older format)
 		$ids = explode( ',', $products_string );
 		$product_ids = array();
 		foreach ( $ids as $id ) {
@@ -271,6 +297,21 @@ class Idl_Pricediscount_Admin {
 	}
 
 	public function save_discount_data( $post_id ) {
+		// Check if we're doing an autosave
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+		
+		// Check user permissions
+		if ( ! current_user_can( 'edit_product', $post_id ) ) {
+			return;
+		}
+		
+		// Verify nonce (if you have one set up)
+		// if ( ! wp_verify_nonce( $_POST['your_nonce'], 'your_action' ) ) {
+		//     return;
+		// }
+		
 		if ( isset( $_POST['idl_discount_type'] ) ) {
 			update_post_meta( $post_id, '_idl_discount_type', sanitize_text_field( $_POST['idl_discount_type'] ) );
 		}
@@ -278,6 +319,11 @@ class Idl_Pricediscount_Admin {
 		if ( isset( $_POST['quantity_rules'] ) ) {
 			$quantity_rules = array();
 			foreach ( $_POST['quantity_rules'] as $rule ) {
+				// Skip empty rules
+				if ( empty( $rule['quantity'] ) || empty( $rule['price'] ) ) {
+					continue;
+				}
+				
 				$quantity_rules[] = array(
 					'quantity' => intval( $rule['quantity'] ),
 					'price' => floatval( $rule['price'] ),
@@ -291,15 +337,39 @@ class Idl_Pricediscount_Admin {
 
 		if ( isset( $_POST['bundle_rules'] ) ) {
 			$bundle_rules = array();
-			foreach ( $_POST['bundle_rules'] as $rule ) {
+			$has_default = false;
+			
+			foreach ( $_POST['bundle_rules'] as $index => $rule ) {
+				// Skip empty rules - but allow empty products (user might have deleted all products)
+				if ( empty( $rule['price'] ) && empty( $rule['products'] ) ) {
+					continue;
+				}
+				
+				$is_default = isset( $rule['is_default'] ) ? 1 : 0;
+				
+				// Ensure only one default is set
+				if ( $is_default && $has_default ) {
+					$is_default = 0;
+				} elseif ( $is_default ) {
+					$has_default = true;
+				}
+				
+				// Sanitize and validate products field
+				$products = isset( $rule['products'] ) ? sanitize_text_field( $rule['products'] ) : '';
+				
 				$bundle_rules[] = array(
-					'products' => sanitize_text_field( $rule['products'] ),
+					'products' => $products,
 					'price' => floatval( $rule['price'] ),
 					'badge' => sanitize_text_field( $rule['badge'] ),
-					'description' => sanitize_textarea_field( $rule['description'] )
+					'description' => sanitize_textarea_field( $rule['description'] ),
+					'is_default' => $is_default
 				);
 			}
+			
 			update_post_meta( $post_id, '_idl_bundle_rules', $bundle_rules );
+		} else {
+			// If no bundle rules are submitted, clear the meta data
+			delete_post_meta( $post_id, '_idl_bundle_rules' );
 		}
 	}
 
