@@ -71,6 +71,9 @@
 		//	$('.discount_option_inner').css('visibility', 'visible');
            // $(this).closest('.discount_option_inner').css('visibility', 'hidden');
 			
+		//	$('.discount_option_inner').css('visibility', 'visible');
+           // $(this).closest('.discount_option_inner').css('visibility', 'hidden');
+			
 			// Show the add to cart button for the selected option
 			//$parentOption.find('.idl-add-to-cart-btn').show();
 			
